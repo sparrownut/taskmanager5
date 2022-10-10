@@ -1,7 +1,11 @@
 import json
+import traceback
 
 import requests
 import urllib3
+
+from utils.netutils import fixpackage
+from utils.output_utils import print_err
 
 awvs_key = '1986ad8c0a5b3df4d7028d5f3c06e936cb467b9a20f2a4557bffd3758d96c9719'
 url = 'https://45.150.226.219:13443'
@@ -10,11 +14,12 @@ headers = {"X-Auth": awvs_key, "Content-type": "application/json;charset=utf8"}
 
 
 def scan_targets(urllist: list):
-    try:
-        id_list = []
-        for it in urllist:
-            if it is None:
-                break
+    id_list = []
+    for it in urllist:
+        it = fixpackage(it)
+        if it is None:
+            break
+        try:
             data = {
                 "address": it,
                 "description": it,
@@ -51,11 +56,9 @@ def scan_targets(urllist: list):
                                   verify=False,
                                   headers=headers).text
             # print(r_run)
-
-        return id_list
-    except Exception:
-        # traceback.print_exc()
-        return -1
-
+        except Exception:
+            print_err(it)
+            traceback.print_exc()
+    return id_list
 
 # print(scan_targets(['baidu.com']))
