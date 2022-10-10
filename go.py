@@ -36,18 +36,28 @@ if __name__ == '__main__':
                 else:
                     # 被验证过的邮件来源
                     try:
-                        #过滤函数
+                        # 过滤函数
                         l_mail_cont = l_mail_cont.replace('<div><!--emptysign--></div>', '')
-                        l_mail_cont = l_mail_cont.replace('<div></div>','')
+                        l_mail_cont = l_mail_cont.replace('<div></div>', '')
 
                         div_s = re.findall('<div>(.*?)</div>', l_mail_cont)
+                        s_list = []
 
                         if '\n' in str(l_mail_cont):
-                            rs = scan_targets(str(l_mail_cont).split('\n'))
+                            # print('n')
+                            s_list = str(l_mail_cont).split('\n')
                         elif len(div_s) >= 1:
-                            rs = scan_targets(div_s)
+                            s_list = div_s
                         else:
-                            rs = scan_targets([l_mail_cont])
+                            s_list = [l_mail_cont]
+
+                        if len(s_list) >= 20:
+                            sendmail([l_mail_from], '扫描任务%s条，数据量较大，可能需要处理一段时间' % len(s_list))
+                        else:
+                            sendmail([l_mail_from],
+                                     '扫描任务%s条 预计%s秒后处理队列完毕' % (len(s_list), len(s_list) * 2))
+                        rs = scan_targets(s_list)  # 开始扫描
+
                         if rs != -1:
                             print_suc('扫描成功')
                             con = """
