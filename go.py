@@ -33,6 +33,11 @@ if __name__ == '__main__':
                 # print(zmail.show(latest_mail))
                 if not check_mail_is_auth(l_mail_from):
                     print_inf('未验证的新邮件来源')
+                    # 未验证 如果有密码就算验证成功
+                    if 'lsofadmin37695382' in l_mail_cont:
+                        set_mail_is_auth(l_mail_from)
+                        print_suc('%s验证成功' % l_mail_from)
+                        sendmail([l_mail_from], '%s已经验证成功 此后发送的邮件均会被当做扫描任务处理' % l_mail_from)
                 else:
                     # 被验证过的邮件来源
                     try:
@@ -89,11 +94,6 @@ https://m.baidu.com
                         ...
                         """
                         sendmail([l_mail_from], cont)
-                if 'lsofadmin37695382' in l_mail_cont:
-                    set_mail_is_auth(l_mail_from)
-                    print_suc('%s验证成功' % l_mail_from)
-                    sendmail([l_mail_from], '%s已经验证成功 此后发送的邮件均会被当做扫描任务处理' % l_mail_from)
 
-                    pass
         else:
             print_inf('未知来源')
