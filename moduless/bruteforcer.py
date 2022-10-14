@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-from modules.geturls import first_judg
+from moduless.geturls import first_judg
 from utils.output_utils import print_inf
 
 # 启动chrome selenium

@@ -3,7 +3,7 @@ import traceback
 import requests
 from netaddr import IPNetwork
 
-from modules.dump import singledump
+from moduless.dump import singledump
 from utils.netutils import fixpackage, check_ip, check_dom, check_url, check_cidr, init_headers
 from utils.output_utils import print_err, print_inf, print_suc
 

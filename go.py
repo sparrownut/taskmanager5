@@ -4,7 +4,7 @@ import traceback
 
 import zmail
 
-from modules.mail import mail_user, mail_pass, check_mail_is_do, set_mail_is_do, check_mail_is_auth, set_mail_is_auth, \
+from moduless.mail import mail_user, mail_pass, check_mail_is_do, set_mail_is_do, check_mail_is_auth, set_mail_is_auth, \
     sendmail
 from scan_task import scan_targets
 from utils.output_utils import print_inf, print_suc, print_err
