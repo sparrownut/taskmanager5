@@ -152,7 +152,7 @@ class tel:
                 msg = json.loads(self.send_verify_package(random_tel))['msg']
                 self.cookie = {'JSESSIONID': self.JSESSIONID}
                 # print(msg)
-                if '用户名或密码错误' in msg or '还未' in msg:
+                if '用户名或密码错误' in msg or '还未设置密码' in msg:
                     suc += 1
                     print_suc('已注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
                     w.write(random_tel + '\n')
@@ -170,20 +170,16 @@ class tel:
 
 if __name__ == '__main__':
 
-    # while True:
-    #     while threads <= 10:
-    #         try:
-    #             # print(threads)
-    #             threading.Thread(target=tel().doonce, args=('15' + tel().generate_random_str(9),)).start()
-    #             threading.Thread(target=tel().doonce, args=('13' + tel().generate_random_str(9),)).start()
-    #             threading.Thread(target=tel().doonce, args=('18' + tel().generate_random_str(9),)).start()
-    #         except Exception:
-    #             pass
-
     for it in open('dic/1.dic', 'r').readlines():
         it = fixpackage(it)
-        a = tel()
-        try:
-            a.doonce(it)
-        except Exception:
-            pass
+        # a = tel()
+        # try:
+        #     a.doonce(it)
+        # except Exception:
+        #     pass
+        while True:
+            if threads <= 10:
+                threading.Thread(target=tel().doonce, args=(it,)).start()
+                break
+            else:
+                pass
