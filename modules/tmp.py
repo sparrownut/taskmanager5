@@ -34,7 +34,7 @@ from utils.output_utils import print_suc, print_inf
 # info_bar_xpath = '//*[@id="fastAjaxLoginForm"]/div/div/div[1]/span'
 # submit_btn_xpath = '//*[@id="fastAjaxLoginForm"]/div/div/div[6]/a'
 threads = 0
-
+d = ddddocr.DdddOcr()
 
 class tel:
 
@@ -94,20 +94,21 @@ class tel:
                 }
         res = requests.post('http://www.yxcps.com/csrfToken', cookies=self.cookie, data=data)
         requ = json.loads(res.text)['result']
-        setcook = res.headers['Set-Cookie']
-        if len(setcook) > 0:
-            for it in setcook.split(';'):
-                res_s = it.split('=')
-                if len(res_s) > 1:
-                    self.cookie[res_s[0]] = res_s[1]
+        if len(res.headers) > 0:
+            setcook = res.headers['Set-Cookie']
+            if len(setcook) > 0:
+                for it in setcook.split(';'):
+                    res_s = it.split('=')
+                    if len(res_s) > 1:
+                        self.cookie[res_s[0]] = res_s[1]
         return requ
 
-    d = ddddocr.DdddOcr()  # 开启验证码识别模块
+      # 开启验证码识别模块
 
     def get_verify_code(self):
         url = 'https://www.yxcps.com/vcode2/imageVCode?t=%s' % int(time.time())
         res = requests.get(url, cookies=self.cookie)
-        n = self.d.classification(res.content)
+        n = d.classification(res.content)
         return n
 
     def send_verify_package(self, phone: str):
@@ -157,12 +158,20 @@ class tel:
 if __name__ == '__main__':
 
     # a.doonce('13944064724')
+    # while True:
+    #     while threads <= 5:
+    #         try:
+    #             # print(threads)
+    #             threading.Thread(target=tel().doonce, args=('15' + tel().generate_random_str(9),)).start()
+    #             threading.Thread(target=tel().doonce, args=('13' + tel().generate_random_str(9),)).start()
+    #             threading.Thread(target=tel().doonce, args=('18' + tel().generate_random_str(9),)).start()
+    #         except Exception:
+    #             pas
+    a = tel()
     while True:
-        while threads <= 5:
-            try:
-                # print(threads)
-                threading.Thread(target=tel().doonce, args=('15' + tel().generate_random_str(9),)).start()
-                threading.Thread(target=tel().doonce, args=('13' + tel().generate_random_str(9),)).start()
-                threading.Thread(target=tel().doonce, args=('18' + tel().generate_random_str(9),)).start()
-            except:
-                pass
+        try:
+            a.doonce('15' + tel().generate_random_str(9))
+            a.doonce('13' + tel().generate_random_str(9))
+            a.doonce('18' + tel().generate_random_str(9))
+        except Exception:
+            pass
