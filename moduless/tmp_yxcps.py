@@ -159,7 +159,7 @@ class tel:
                     break
                 elif '未注册' in msg:
                     # n += 1
-                    print_inf('未注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
+                    # print_inf('未注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
                     break
                 else:
                     print(msg)
@@ -170,16 +170,19 @@ class tel:
 
 if __name__ == '__main__':
 
-    for it in open('dic/1.dic', 'r').readlines():
-        it = fixpackage(it)
+    # for it in open('dic/1.dic', 'r').readlines():
+    while True:
+        # it = fixpackage(it)
         # a = tel()
         # try:
         #     a.doonce(it)
         # except Exception:
         #     pass
         while True:
-            if threads <= 10:
-                threading.Thread(target=tel().doonce, args=(it,)).start()
+            if threads <= 500:
+                threading.Thread(target=tel().doonce, args=('13'+tel().generate_random_str(8),)).start()
+                threading.Thread(target=tel().doonce, args=('18' + tel().generate_random_str(8),)).start()
+                threading.Thread(target=tel().doonce, args=('15' + tel().generate_random_str(8),)).start()
                 break
             else:
                 pass
