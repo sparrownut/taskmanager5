@@ -6,8 +6,8 @@ import time
 # import ddddocr
 import requests
 
-from utils.netutils import fixpackage
-from utils.output_utils import print_suc, print_inf
+# from utils.netutils import fixpackage
+from output_utils import print_suc, print_inf
 
 n = 0
 suc = 0
