@@ -6,8 +6,7 @@ import time
 import ddddocr
 import requests
 
-from utils.output_utils import print_inf, print_suc
-
+from modules.output_utils import print_inf, print_suc
 
 #
 # opt = Options()
