@@ -145,7 +145,7 @@ class tel:
         global n, suc, threads
         threads += 1
         random_tel = tel
-        w = open('tel.res', 'a')
+
         n += 1
         while True:
             try:
@@ -153,9 +153,11 @@ class tel:
                 self.cookie = {'JSESSIONID': self.JSESSIONID}
                 # print(msg)
                 if '用户名或密码错误' in msg or '还未设置密码' in msg:
+                    w = open('tel.res', 'a')
                     suc += 1
                     print_suc('已注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
                     w.write(random_tel + '\n')
+                    w.close()
                     break
                 elif '未注册' in msg:
                     # n += 1
