@@ -6,7 +6,7 @@ import time
 import ddddocr
 import requests
 
-from modules.output_utils import print_inf, print_suc
+from utils.output_utils import print_suc, print_inf
 
 #
 # opt = Options()
@@ -33,7 +33,9 @@ from modules.output_utils import print_inf, print_suc
 # pwd_input_xpath = '//*[@id="pswd"]'
 # info_bar_xpath = '//*[@id="fastAjaxLoginForm"]/div/div/div[1]/span'
 # submit_btn_xpath = '//*[@id="fastAjaxLoginForm"]/div/div/div[6]/a'
-threads=0
+threads = 0
+
+
 class tel:
 
     def generate_random_str(self, randomlength=8):
@@ -127,7 +129,8 @@ class tel:
             'pswd': 'ls82hhd92j',
             'checkbox': 'checkbox',
         }
-        r = requests.post('http://www.yxcps.com/account/axlogin2.do', headers=headers, cookies=self.cookie, data=data).text
+        r = requests.post('http://www.yxcps.com/account/axlogin2.do', headers=headers, cookies=self.cookie,
+                          data=data).text
         return r
 
     threads = 0
