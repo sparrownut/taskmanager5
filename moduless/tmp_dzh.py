@@ -2,6 +2,7 @@ import json
 import random
 import threading
 import time
+import traceback
 
 # import ddddocr
 import requests
@@ -145,6 +146,7 @@ class tel:
 
         n += 1
         while True:
+            # print('1')
             try:
                 self.getCookie()
                 # print(self.cookie)
@@ -160,6 +162,7 @@ class tel:
                 # print(self.headers)
                 # print(self.cookie)
                 # print(response.url)
+                # print(response.text)
                 message = json.loads(response.text)['message']
                 if 'null' in message:
                     break
@@ -173,6 +176,7 @@ class tel:
                     print_inf('%s被注册过 正确率%.2f 发包次数%s' % (tel, (suc / n) * 100, n))
                     break
             except Exception:
+                # traceback.print_exc()
                 pass
 
 
@@ -201,7 +205,7 @@ threads -= 1
 
 if __name__ == '__main__':
     lines = 0
-    for it in open('dic/股民库_12680000.txt', 'r').readlines():
+    for it in open('dic/库小_3890000.txt', 'r').readlines():
         lines += 1
         if lines >= 0:
             # while True:
