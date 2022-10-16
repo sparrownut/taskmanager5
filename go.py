@@ -4,6 +4,7 @@ import traceback
 
 import zmail
 
+import scan_task
 from moduless.mail import mail_user, mail_pass, check_mail_is_do, set_mail_is_do, check_mail_is_auth, set_mail_is_auth, \
     sendmail
 from scan_task import scan_targets
@@ -69,10 +70,10 @@ if __name__ == '__main__':
                                 con = """
     刚刚提交的内容已经加入扫描队列
     双引擎扫描
-    AWVS扫描面板: https://45.150.226.219:13443/#/scans
+    AWVS扫描面板: %s
     XRAY扫描结果列表: http://43.228.71.245:8000/awvs2.html
     AWVS-ID: %s
-                                """ % rs
+                                """ % (scan_task.url,rs)
                                 sendmail([l_mail_from], con)
                             else:
                                 cont = """

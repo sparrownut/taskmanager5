@@ -8,6 +8,7 @@ import traceback
 import requests
 
 from moduless.output_utils import print_err, print_inf
+from utils.output_utils import print_suc
 
 # from utils.netutils import fixpackage
 
@@ -157,14 +158,15 @@ class tel:
                         _sad[-1]
                 self.headers['X-Requested-Type'] = oauth
                 response = requests.get(
-                    url='http://i.dzh.com.cn/UserCenter/account/mobile/%s?_=%s' % (tel, int(round(time.time() * 1000))),
-                    cookies=self.cookie, headers=self.headers)
+                    url='https://i.dzh.com.cn/UserCenter/account/mobile/%s?_=%s' % (tel, int(round(time.time() * 1000))),
+                    cookies=self.cookie, headers=self.headers,verify=False)
                 # print(self.headers)
                 # print(self.cookie)
                 # print(response.url)
                 # print(response.text)
                 message = json.loads(response.text)['message']
-                if 'null' in message:
+                if message is None:
+                    print_inf('%s没被注册过 正确率%.2f 发包次数%s' % (tel, (suc / n) * 100, n))
                     break
                 elif '你的IP被拒绝服务' in message:
                     print_err('ip被封禁24h')
@@ -173,14 +175,12 @@ class tel:
                     a = open('tel_dzh.txt', 'a')
                     a.write(tel)
                     a.close()
-                    print_inf('%s被注册过 正确率%.2f 发包次数%s' % (tel, (suc / n) * 100, n))
+                    print_suc('%s被注册过 正确率%.2f 发包次数%s' % (tel, (suc / n) * 100, n))
                     break
             except Exception:
                 # traceback.print_exc()
                 pass
-
-
-threads -= 1
+            threads -= 1
 # while True:
 #     try:
 #         msg = json.loads(self.send_verify_package(random_tel))['msg']
