@@ -172,9 +172,9 @@ class tel:
 
 if __name__ == '__main__':
     lines = 0
-    for it in open('dic/股民库_12680000.txt', 'r').readlines():
+    for it in open('dic/1.dic', 'r').readlines():
         lines += 1
-        if lines >= 400000:
+        if lines >= 0:
             # while True:
             # it = fixpackage(it)
             # a = tel()
@@ -183,7 +183,7 @@ if __name__ == '__main__':
             # except Exception:
             #     pass
             while True:
-                if threads <= 6000:
+                if threads <= 1000:
                     threading.Thread(target=tel().doonce, args=(it,)).start()
                     break
                 else:
