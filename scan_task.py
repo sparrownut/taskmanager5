@@ -9,15 +9,18 @@ from moduless.mail import sendmail
 from utils.netutils import fixpackage
 from utils.output_utils import print_err
 
-awvs_key = '1986ad8c0a5b3df4d7028d5f3c06e936cb467b9a20f2a4557bffd3758d96c9719'
-url = 'https://45.150.226.219:13443'
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-headers = {"X-Auth": awvs_key, "Content-type": "application/json;charset=utf8"}
-
 
 class scan_task_class:
-    def __init__(self):
-        pass
+    awvs_key = '1986ad8c0a5b3df4d7028d5f3c06e936cb467b9a20f2a4557bffd3758d96c9719'
+    url = 'https://45.150.226.219:13443'
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    headers = {"X-Auth": awvs_key, "Content-type": "application/json;charset=utf8"}
+    mail = []
+
+    def __init__(self, mail: list, awvs_key: str, url: str):
+        self.awvs_key = awvs_key
+        self.url = url
+        self.mail = mail
 
     def nuclei_scan(self, urllist: list):
         try:
@@ -29,18 +32,18 @@ class scan_task_class:
             nucleiWriteFile.write(string)  # 将任务写入文档
             cmd = './nuclei -p proxylist -l %s -s low,medium,high,critical' % tmp_url
             if len(string) >= 128:
-                sendmail(['2928109164@qq.com'], '%s正在nuclei扫描中') % string[0:127]
+                sendmail(self.mail, '%s正在nuclei扫描中') % string[0:127]
             else:
-                sendmail(['2928109164@qq.com'], '%s正在nuclei扫描中') % string
+                sendmail(self.mail, '%s正在nuclei扫描中') % string
             p = subprocess.Popen(cmd, shell=True)  # 执行命令运行nuclei
             out, err = p.communicate()  # 获取执行结果
             if len(string) >= 128:
-                sendmail(['2928109164@qq.com'], '%s nuclei扫描完成') % string[0:127]
+                sendmail(self.mail, '%s nuclei扫描完成') % string[0:127]
             else:
-                sendmail(['2928109164@qq.com'], '%s nuclei扫描完成') % string
-            sendmail(['2928109164@qq.com'], out.decode())
+                sendmail(self.mail, '%s nuclei扫描完成') % string
+            sendmail(self.mail, out.decode())
         except Exception:
-            sendmail(['2928109164@qq.com'], 'nuclei 扫描出现问题')
+            sendmail(self.mail, 'nuclei 扫描出现问题')
 
     def scan_targets(self, urllist: list):
         id_list = []
@@ -57,19 +60,13 @@ class scan_task_class:
                     }
                     data_json = json.dumps(data)
                     targets_api = '/api/v1/targets'
-                    r = requests.post(url + targets_api, data=data_json, headers=headers, verify=False).text  # 发送扫描任务
+                    r = requests.post(self.url + targets_api, data=data_json, headers=self.headers,
+                                      verify=False).text  # 发送扫描任务
                     id_list.append(json.loads(r)['target_id'])
-                    # targets_adv_conf_api = '/api/v1/targets/%s/configuration' % json.loads(r)['target_id']  # 高级配置api
-                    # data_proxy_api_conf_set = {"proxy":
-                    #                                {"enabled": True,
-                    #                                 "address": "43.228.71.245",
-                    #                                 "protocol": "http",
-                    #                                 "port": 1111
-                    #                                 }
-                    #                            }
-                    # r_conf_proxy = requests.patch(url + targets_adv_conf_api, data=json.dumps(data_proxy_api_conf_set),
-                    #                               verify=False,
-                    #                               headers=headers).text
+                    # targets_adv_conf_api = '/api/v1/targets/%s/configuration' % json.loads(r)['target_id']  #
+                    # 高级配置api data_proxy_api_conf_set = {"proxy": {"enabled": True, "address": "43.228.71.245",
+                    # "protocol": "http", "port": 1111 } } r_conf_proxy = requests.patch(url + targets_adv_conf_api,
+                    # data=json.dumps(data_proxy_api_conf_set), verify=False, headers=headers).text
 
                     api_run = '/api/v1/scans'
                     data_run = {
@@ -82,9 +79,9 @@ class scan_task_class:
                              }
                     }
                     # print(json.dumps(data_run))
-                    r_run = requests.post(url + api_run, data=json.dumps(data_run),
+                    r_run = requests.post(self.url + api_run, data=json.dumps(data_run),
                                           verify=False,
-                                          headers=headers).text
+                                          headers=self.headers).text
                     # print(r_run)
                     break
                 except Exception:

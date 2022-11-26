@@ -1,3 +1,4 @@
+import argparse
 import re
 import time
 import traceback
@@ -9,10 +10,20 @@ from moduless.mail import mail_user, mail_pass, check_mail_is_do, set_mail_is_do
     sendmail
 from utils.output_utils import print_inf, print_suc, print_err
 
+
+def argument_init():
+    parser = argparse.ArgumentParser(description='命令行中传入一个数字')
+    # type是要传入的参数的数据类型  help是该参数的提示信息
+    parser.add_argument('u', type=str, help='AWVS的url')
+    parser.add_argument('k', type=str, help='AWVS的key')
+    return parser.parse_args()
+
+
+args = argument_init()
 if __name__ == '__main__':
     server = zmail.server(mail_user, mail_pass)
     try:
-        while True:
+        while True:  # 循环查找新邮件
             time.sleep(1)
             print_inf('check')
             latest_mail = server.get_latest()
@@ -62,7 +73,7 @@ if __name__ == '__main__':
                             else:
                                 sendmail([l_mail_from],
                                          '扫描任务%s条 预计%s秒后处理队列完毕' % (len(s_list), len(s_list) * 3))
-                            class_scan = scan_task.scan_task_class()
+                            class_scan = scan_task.scan_task_class([l_mail_from], url=args.u, awvs_key=args.k)
                             rs = class_scan.scan_targets(s_list)  # 开始扫描
 
                             if rs != -1:
@@ -73,7 +84,7 @@ if __name__ == '__main__':
     AWVS扫描面板: %s
     XRAY扫描结果列表: http://43.228.71.245:8000/awvs2.html
     AWVS-ID: %s
-                                """ % (scan_task.url,rs)
+                                """ % (class_scan.url, rs)
                                 sendmail([l_mail_from], con)
                             else:
                                 cont = """
