@@ -7,7 +7,6 @@ import zmail
 import scan_task
 from moduless.mail import mail_user, mail_pass, check_mail_is_do, set_mail_is_do, check_mail_is_auth, set_mail_is_auth, \
     sendmail
-from scan_task import scan_targets
 from utils.output_utils import print_inf, print_suc, print_err
 
 if __name__ == '__main__':
@@ -63,7 +62,8 @@ if __name__ == '__main__':
                             else:
                                 sendmail([l_mail_from],
                                          '扫描任务%s条 预计%s秒后处理队列完毕' % (len(s_list), len(s_list) * 3))
-                            rs = scan_targets(s_list)  # 开始扫描
+                            class_scan = scan_task.scan_task_class()
+                            rs = class_scan.scan_targets(s_list)  # 开始扫描
 
                             if rs != -1:
                                 print_suc('扫描成功')

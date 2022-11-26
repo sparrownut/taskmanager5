@@ -161,7 +161,7 @@ class tel:
                     break
                 elif '未注册' in msg:
                     # n += 1
-                    # print_inf('未注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
+                    print_inf('未注册:%s 成功率%.2f%% 已尝试:%s' % (random_tel, (suc / n) * 100, n))
                     break
                 else:
                     print(msg)
