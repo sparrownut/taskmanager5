@@ -37,7 +37,7 @@ if __name__ == '__main__':
             # print(latest_mail['From'])
             f = re.findall('<(.*?)>', latest_mail['From'])
             if len(f) >= 1:
-                l_mail_from = f[0]
+                l_mail_from = f[0]  # 发送者邮箱
                 if not check_mail_is_do(l_mail_id):
                     set_mail_is_do(l_mail_id)
                     print_inf('接收到新邮件 %s' % l_mail_from)
