@@ -11,8 +11,8 @@ from utils.output_utils import print_err
 
 
 class scan_task_class:
-    awvs_key = '1986ad8c0a5b3df4d7028d5f3c06e936cb467b9a20f2a4557bffd3758d96c9719'
-    url = 'https://45.150.226.219:13443'
+    awvs_key = ''
+    url = ''
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     headers = {"X-Auth": awvs_key, "Content-type": "application/json;charset=utf8"}
     mail = []
