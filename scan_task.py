@@ -25,13 +25,13 @@ class scan_task_class:
 
     def expand_domain(self, urllist: list):
         sendmail(self.mail, '资产扩张中')
-        open('output_dir/output.txt', 'w', errors=None).write('')  # 清除文件内容
-        res_output = open('output_dir/output.txt', 'a', errors=None)
+        open('auxily/scan/output_dir/output.txt', 'w', errors=None).write('')  # 清除文件内容
+        res_output = open('auxily/scan/output_dir/output.txt', 'a', errors=None)
         for it in expand_dom(urllist):
             res_output.write(it + '\n')
         res_output.close()
         sendmail(self.mail, '资产扩张完成 正在筛选中...')
-        res = checkurl.check('output_dir/output.txt').run()
+        res = checkurl.check('auxily/scan/output_dir/output.txt').run()
         sendmail(self.mail, '资产筛选完成\n%s' % res)
         res_list = []
         for it in res.split('\n'):
