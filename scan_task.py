@@ -1,6 +1,7 @@
 import json
 import subprocess
 import traceback
+import uuid
 
 import requests
 import urllib3
@@ -11,16 +12,14 @@ from utils.output_utils import print_err
 
 
 class scan_task_class:
-    awvs_key = ''
-    url = ''
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    headers = {"X-Auth": awvs_key, "Content-type": "application/json;charset=utf8"}
-    mail = []
 
     def __init__(self, mail: list, awvs_key: str, url: str):
         self.awvs_key = awvs_key
         self.url = url
         self.mail = mail
+        self.uuid = uuid.uuid4()  # 产生一串唯一uuid作为任务名
+        self.headers = {"X-Auth": self.awvs_key, "Content-type": "application/json;charset=utf8"}
 
     def nuclei_scan(self, urllist: list):
         try:
@@ -45,7 +44,7 @@ class scan_task_class:
         except Exception:
             sendmail(self.mail, 'nuclei 扫描出现问题')
 
-    def scan_targets(self, urllist: list):
+    def awvs_scan(self, urllist):  # awvs扫描函数
         id_list = []
         for it in urllist:
             it = fixpackage(it)
@@ -88,5 +87,10 @@ class scan_task_class:
                     print_err(it)
                     traceback.print_exc()
         return id_list
+
+    def scan_targets(self, urllist: list):  # 检测主线程
+
+        self.awvs_scan(urllist=urllist) # awvs扫描
+        self.nuclei_scan(urllist=urllist) # nuclei扫描
 
     # print(scan_targets(['baidu.com']))

@@ -1,5 +1,6 @@
 import argparse
 import re
+import threading
 import time
 import traceback
 
@@ -74,28 +75,8 @@ if __name__ == '__main__':
                                 sendmail([l_mail_from],
                                          '扫描任务%s条 预计%s秒后处理队列完毕' % (len(s_list), len(s_list) * 3))
                             class_scan = scan_task.scan_task_class([l_mail_from], url=args.u, awvs_key=args.k)
-                            rs = class_scan.scan_targets(s_list)  # 开始扫描
-
-                            if rs != -1:
-                                print_suc('扫描成功')
-                                con = """
-    刚刚提交的内容已经加入扫描队列
-    双引擎扫描
-    AWVS扫描面板: %s
-    XRAY扫描结果列表: http://43.228.71.245:8000/awvs2.html
-    AWVS-ID: %s
-                                """ % (class_scan.url, rs)
-                                sendmail([l_mail_from], con)
-                            else:
-                                cont = """
-    刚刚提交的目标不符合规范
-    正确示范:
-    https://baidu.com
-    https://www.baidu.com
-    https://m.baidu.com
-                                ...
-                                """
-                                sendmail([l_mail_from], cont)
+                            thread_tmp = threading.Thread(target=class_scan.scan_targets,args=(s_list,))
+                            thread_tmp.start()  # 开始扫描 一切结果移交给线程内部完成
                         except:
                             traceback.print_exc()
                             cont = """
