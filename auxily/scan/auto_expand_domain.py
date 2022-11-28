@@ -4,7 +4,7 @@ import json
 
 import requests
 
-import checkurl
+from auxily.scan import checkurl
 from tools.mail import sendmail
 from utils.output_utils import print_suc, print_inf
 
