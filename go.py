@@ -26,7 +26,7 @@ if __name__ == '__main__':
     try:
         while True:  # 循环查找新邮件
             time.sleep(1)
-            print_inf('check')
+            # print_inf('check')
             latest_mail = server.get_latest()
             l_mail_id = latest_mail['Id']
             # zmail.show(latest_mail)

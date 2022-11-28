@@ -25,10 +25,12 @@ class scan_task_class:
         try:
             tmp_url = 'tmp.txt'
             nucleiWriteFile = open(tmp_url, 'w+', errors=None)
+
             string = ''
             for it in urllist:
-                string += string + '\n'
+                string += it + '\n'
             nucleiWriteFile.write(string)  # 将任务写入文档
+            nucleiWriteFile.close()
             cmd = './nuclei -p proxylist -l %s -s low,medium,high,critical' % tmp_url
             if len(string) >= 128:
                 sendmail(self.mail, '%s正在nuclei扫描中' % string[0:127])
