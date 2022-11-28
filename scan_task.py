@@ -39,8 +39,7 @@ class scan_task_class:
                 sendmail(self.mail, '%s正在nuclei扫描中' % string[0:127])
             else:
                 sendmail(self.mail, '%s正在nuclei扫描中' % string)
-            p = subprocess.Popen(cmd, shell=True)  # 执行命令运行nuclei
-            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE) # 执行命令运行nuclei
             (out, err) = p.communicate()  # 获取执行结果
             if len(string) >= 128:
                 sendmail(self.mail, '%s nuclei扫描完成\n%s\n%s' % (string[0:127], out, err))
