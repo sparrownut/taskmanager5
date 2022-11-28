@@ -34,17 +34,18 @@ class scan_task_class:
                 string += it + '\n'
             nucleiWriteFile.write(string)  # 将任务写入文档
             nucleiWriteFile.close()
-            cmd = './nuclei -p proxylist -l %s -s low,medium,high,critical' % tmp_url
+            cmd = './nuclei -p proxylist -ld    dz %s -s low,medium,high,critical' % tmp_url
             if len(string) >= 128:
                 sendmail(self.mail, '%s正在nuclei扫描中' % string[0:127])
             else:
                 sendmail(self.mail, '%s正在nuclei扫描中' % string)
             p = subprocess.Popen(cmd, shell=True)  # 执行命令运行nuclei
-            out = p.stdout.read()  # 获取执行结果
+            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+            (out, err) = p.communicate()  # 获取执行结果
             if len(string) >= 128:
-                sendmail(self.mail, '%s nuclei扫描完成\n%s' % (string[0:127], out))
+                sendmail(self.mail, '%s nuclei扫描完成\n%s\n%s' % (string[0:127], out, err))
             else:
-                sendmail(self.mail, '%s nuclei扫描完成\n%s' % (string[0:127], out))
+                sendmail(self.mail, '%s nuclei扫描完成\n%s\n%s' % (string[0:127], out, err))
         except Exception:
             sendmail(self.mail, 'nuclei 扫描出现问题')
             traceback.print_exc()
