@@ -72,8 +72,7 @@ if __name__ == '__main__':
 
                             class_scan = scan_task.scan_task_class([l_mail_from], url=args.u, awvs_key=args.k,
                                                                    uuid=uuid.uuid4())
-                            thread_tmp = threading.Thread(target=class_scan.scan_targets, args=(s_list,))
-                            thread_tmp.start()  # 开始扫描 一切结果移交给线程内部完成
+                            class_scan.scan_targets(s_list)
                         except:
                             traceback.print_exc()
                             cont = """
