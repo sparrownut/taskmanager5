@@ -1,7 +1,7 @@
 import json
 import subprocess
 import traceback
-import uuid
+from uuid import UUID
 
 import requests
 import urllib3
@@ -16,11 +16,11 @@ from utils.output_utils import print_err
 class scan_task_class:
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-    def __init__(self, mail: list, awvs_key: str, url: str):
+    def __init__(self, mail: list, awvs_key: str, url: str, uuid: UUID):
         self.awvs_key = awvs_key
         self.url = url
         self.mail = mail
-        self.uuid = uuid.uuid4()  # 产生一串唯一uuid作为任务名
+        self.uuid = uuid
         self.headers = {"X-Auth": self.awvs_key, "Content-type": "application/json;charset=utf8"}
 
     def expand_domain(self, urllist: list):

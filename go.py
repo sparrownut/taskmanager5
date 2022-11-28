@@ -3,6 +3,7 @@ import re
 import threading
 import time
 import traceback
+import uuid
 
 import zmail
 
@@ -26,7 +27,7 @@ if __name__ == '__main__':
     try:
         while True:  # 循环查找新邮件
             time.sleep(1)
-            #print_inf('check')
+            # print_inf('check')
             latest_mail = server.get_latest()
             l_mail_id = latest_mail['Id']
             # zmail.show(latest_mail)
@@ -69,9 +70,9 @@ if __name__ == '__main__':
                             else:
                                 s_list = [l_mail_cont]
 
-
-                            class_scan = scan_task.scan_task_class([l_mail_from], url=args.u, awvs_key=args.k)
-                            thread_tmp = threading.Thread(target=class_scan.scan_targets,args=(s_list,))
+                            class_scan = scan_task.scan_task_class([l_mail_from], url=args.u, awvs_key=args.k,
+                                                                   uuid=uuid.uuid4())
+                            thread_tmp = threading.Thread(target=class_scan.scan_targets, args=(s_list,))
                             thread_tmp.start()  # 开始扫描 一切结果移交给线程内部完成
                         except:
                             traceback.print_exc()
