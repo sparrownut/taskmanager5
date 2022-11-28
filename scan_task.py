@@ -6,6 +6,7 @@ import uuid
 import requests
 import urllib3
 
+from auxily.scan.auto_expand_domain import expand_dom
 from moduless.mail import sendmail
 from utils.netutils import fixpackage
 from utils.output_utils import print_err
@@ -22,7 +23,7 @@ class scan_task_class:
         self.headers = {"X-Auth": self.awvs_key, "Content-type": "application/json;charset=utf8"}
 
     def expand_domain(self, urllist: list):
-        pass
+        return expand_dom(urllist)
 
     def nuclei_scan(self, urllist: list):
         try:
@@ -104,8 +105,8 @@ class scan_task_class:
             sendmail(self.mail, 'awvs 扫描出现问题')
 
     def scan_targets(self, urllist: list):  # 检测主线程
-
-        self.awvs_scan(urllist=urllist)  # awvs扫描
-        self.nuclei_scan(urllist=urllist)  # nuclei扫描
+        expanded_list = expand_dom(input_url=urllist)
+        self.awvs_scan(urllist=expanded_list)  # awvs扫描
+        self.nuclei_scan(urllist=expanded_list)  # nuclei扫描
 
     # print(scan_targets(['baidu.com']))
