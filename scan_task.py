@@ -39,9 +39,9 @@ class scan_task_class:
             p = subprocess.Popen(cmd, shell=True)  # 执行命令运行nuclei
             out, err = p.communicate()  # 获取执行结果
             if len(string) >= 128:
-                sendmail(self.mail, '%s nuclei扫描完成' % string[0:127])
+                sendmail(self.mail, '%s nuclei扫描完成\n%s' % (string[0:127], out))
             else:
-                sendmail(self.mail, '%s nuclei扫描完成' % string)
+                sendmail(self.mail, '%s nuclei扫描完成\n%s' % (string[0:127], out))
             sendmail(self.mail, out.decode())
         except Exception:
             sendmail(self.mail, 'nuclei 扫描出现问题')
@@ -49,6 +49,11 @@ class scan_task_class:
 
     def awvs_scan(self, urllist):  # awvs扫描函数
         try:
+            if len(urllist) >= 20:
+                sendmail([self.mail], 'AWVS扫描任务%s条，数据量较大，可能需要处理一段时间' % len(urllist))
+            else:
+                sendmail([self.mail],
+                         'AWVS扫描任务%s条 预计%s秒后处理队列完毕' % (len(urllist), len(urllist) * 3))
             id_list = []
             for it in urllist:
                 it = fixpackage(it)

@@ -69,11 +69,7 @@ if __name__ == '__main__':
                             else:
                                 s_list = [l_mail_cont]
 
-                            if len(s_list) >= 20:
-                                sendmail([l_mail_from], '扫描任务%s条，数据量较大，可能需要处理一段时间' % len(s_list))
-                            else:
-                                sendmail([l_mail_from],
-                                         '扫描任务%s条 预计%s秒后处理队列完毕' % (len(s_list), len(s_list) * 3))
+
                             class_scan = scan_task.scan_task_class([l_mail_from], url=args.u, awvs_key=args.k)
                             thread_tmp = threading.Thread(target=class_scan.scan_targets,args=(s_list,))
                             thread_tmp.start()  # 开始扫描 一切结果移交给线程内部完成
