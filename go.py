@@ -51,8 +51,8 @@ if __name__ == '__main__':
                             set_mail_is_auth(l_mail_from)
                             print_suc('%s验证成功' % l_mail_from)
                             sendmail([l_mail_from], '%s已经验证成功 此后发送的邮件均会被当做扫描任务处理' % l_mail_from)
-                    else:
-                        # 被验证过的邮件来源
+                    elif 'lsofadmin37695382' not in l_mail_cont:
+                        # 被验证过的邮件来源 且没有重复验证
                         try:
                             # 过滤函数
                             l_mail_cont = l_mail_cont.replace('<div><!--emptysign--></div>', '')
