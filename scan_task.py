@@ -6,6 +6,7 @@ import uuid
 import requests
 import urllib3
 
+from auxily.scan import checkurl
 from auxily.scan.auto_expand_domain import expand_dom
 from moduless.mail import sendmail
 from utils.netutils import fixpackage
@@ -23,7 +24,19 @@ class scan_task_class:
         self.headers = {"X-Auth": self.awvs_key, "Content-type": "application/json;charset=utf8"}
 
     def expand_domain(self, urllist: list):
-        return expand_dom(urllist)
+        sendmail(self.mail, '资产扩张中')
+        open('output_dir/output.txt', 'w', errors=None).write('')  # 清除文件内容
+        res_output = open('output_dir/output.txt', 'a', errors=None)
+        for it in expand_dom(urllist):
+            res_output.write(it + '\n')
+        res_output.close()
+        sendmail(self.mail, '资产扩张完成 正在筛选中...')
+        res = checkurl.check('output_dir/output.txt').run()
+        sendmail(self.mail, '资产筛选完成\n%s' % res)
+        res_list = []
+        for it in res.split('\n'):
+            res_list.append(it.split(',')[0])
+        return res_list
 
     def nuclei_scan(self, urllist: list):
         try:
@@ -105,7 +118,7 @@ class scan_task_class:
             sendmail(self.mail, 'awvs 扫描出现问题')
 
     def scan_targets(self, urllist: list):  # 检测主线程
-        expanded_list = expand_dom(input_url=urllist)
+        expanded_list = self.expand_domain(urllist)
         self.awvs_scan(urllist=expanded_list)  # awvs扫描
         self.nuclei_scan(urllist=expanded_list)  # nuclei扫描
 
