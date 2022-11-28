@@ -21,6 +21,9 @@ class scan_task_class:
         self.uuid = uuid.uuid4()  # 产生一串唯一uuid作为任务名
         self.headers = {"X-Auth": self.awvs_key, "Content-type": "application/json;charset=utf8"}
 
+    def expand_domain(self, urllist: list):
+        pass
+
     def nuclei_scan(self, urllist: list):
         try:
             tmp_url = 'tmp.txt'
@@ -37,12 +40,11 @@ class scan_task_class:
             else:
                 sendmail(self.mail, '%s正在nuclei扫描中' % string)
             p = subprocess.Popen(cmd, shell=True)  # 执行命令运行nuclei
-            out, err = p.communicate()  # 获取执行结果
+            out = p.stdout.read()  # 获取执行结果
             if len(string) >= 128:
                 sendmail(self.mail, '%s nuclei扫描完成\n%s' % (string[0:127], out))
             else:
                 sendmail(self.mail, '%s nuclei扫描完成\n%s' % (string[0:127], out))
-            sendmail(self.mail, out.decode())
         except Exception:
             sendmail(self.mail, 'nuclei 扫描出现问题')
             traceback.print_exc()
