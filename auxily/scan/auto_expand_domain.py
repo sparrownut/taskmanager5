@@ -76,7 +76,7 @@ if __name__ == '__main__':  # 从文件夹读取url列表并批量扩张资产�
     res_output = open('output_dir/output.txt', 'a', errors=None)
     print_inf('扩张资产中')
     for it in expand_dom(input_url):
-        res_output.write(it + '\n')
+        res_output.write(it[0] + '\n')
     print_suc('扩张完毕')
     res_output.close()
     print_inf('检查可用性中')
